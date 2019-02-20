@@ -1,21 +1,37 @@
 import Render from './assets/js/render'
-import Database from './assets/js/database'
+import ConnectionDB from './assets/js/firebase/connectionDB';
 
-const db = new Database()
-const render = new Render(db)
+class Index {
 
-render.contacts()
-
-document.getElementById('bDelete').onclick = () => {
-    const id = document.getElementById('iId').value
-    console.log(id)
-    db.deleteContact(id)
-}
-
-document.getElementById('bCreate').onclick = () => {
-    const item = {
-        name: "Teste",
-        phone: "234234"
+    constructor() {
+        this.conn = new ConnectionDB()
+        this.render = new Render(this.conn.database)
+        this.render.contacts()
+        this.eventos()
     }
-    db.createContact(item)
+
+    eventos() {
+        document.getElementById('bDelete').onclick = () => {
+            const id = document.getElementById('list').value
+            this.conn.database.delete(`/contatos/${id}`)
+        }
+
+        document.getElementById('bCreate').onclick = () => {
+            const item = {
+                name: "Teste",
+                phone: new Date().getMilliseconds()
+            }
+            this.conn.database.save('/contatos', item)
+        }
+
+        document.getElementById('bUpdate').onclick = () => {
+            const id = document.getElementById('list').value
+            this.conn.database.get('/contatos', (data) => {
+                const item = data.child(id).val()
+                this.conn.database.save('/contatos', item)
+            }, false)
+        }
+    }
 }
+
+new Index()

@@ -5,15 +5,11 @@ export default class Render {
     }
 
     contacts(){
-        this.db.getContacts((data) => {
+        this.db.get('/contatos', (data) => {
             let count = 1
             document.getElementById('list').innerHTML = ''
             data.forEach(e => {
-                if(count == 1){
-                    document.getElementById('iId').value = e.val().id
-                    count++
-                }
-                document.getElementById('list').insertAdjacentHTML('beforeend', `<option>ID: ${e.val().id} - ${e.val().name} ${e.val().phone}</option>`)
+                document.getElementById('list').insertAdjacentHTML('beforeend', `<option value="${e.val().id}">${e.val().name} ${e.val().phone}</option>`)
             })
         })
     }
